@@ -23,7 +23,10 @@ macro_rules! avec {
     // Below tricks  for counting expression without
     // consuming it
     (@COUNT; $($element:expr),*) => {
-        <[()]>::len(&[$($crate::avec![@SUBST; $element]),*])
+        // take the array's reference then
+        // call the implementation of unit array's
+        // len function
+        <[()]>::len(&[$($crate::avec![@SUBST; $element]),*])element
     };
 
     (@SUBST; $_element:expr) => { () }

@@ -14,12 +14,13 @@ macro_rules! avec {
         vs
     }};
     ($element:expr; $count:expr) => {{
-        let mut vs = Vec::new();
-        //evaluate an expression once and keep the value
-        let x = $element;
-        for _ in 0..$count {
-            vs.push(x.clone());
-        }
+        let count = $count;
+        //make a vector with the capacity of count
+        //to prevent allocation work everytime the vector
+        //needs to be doubled in size
+        let mut vs = Vec::with_capacity(count);
+        //avoid allocation work
+        vs.extend(std::iter::repeat($element).take(count));
         vs
     }};
 

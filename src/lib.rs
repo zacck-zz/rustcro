@@ -1,26 +1,22 @@
 //pub for macro
 #[macro_export]
 macro_rules! avec {
-    () => {
-        Vec::new()
-    };
     // outer curly braces is for macro rules
     // inner curly braces is the block the macro expands to
-    ($($element:expr),+ /* + means one or more exprs separated by a comma*/ $(,)? /* Allow for trailing commas*/) => {{
+    ($($element:expr),*) /* * means zero or more exprs separated by a comma*/=> {{
         let mut vs = Vec::new();
         // repeat this operation as many times
         // the same number of times as the pattern that had element in it
         $(vs.push($element);)*
         vs
     }};
+    ($(element:expr,)*) =>{{
+        $crate::avec![$($element), *]
+    }};
     ($element:expr; $count:expr) => {{
-        let count = $count;
-        //make a vector with the capacity of count
-        //to prevent allocation work everytime the vector
-        //needs to be doubled in size
-        let mut vs = Vec::with_capacity(count);
-        //avoid allocation work
-        vs.extend(std::iter::repeat($element).take(count));
+        let mut vs = Vec::new();
+        //avoid bounds checking
+        vs.resize(count, $element);
         vs
     }};
 

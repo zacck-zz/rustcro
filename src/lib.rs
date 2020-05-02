@@ -4,21 +4,29 @@ macro_rules! avec {
     // outer curly braces is for macro rules
     // inner curly braces is the block the macro expands to
     ($($element:expr),*) /* * means zero or more exprs separated by a comma*/=> {{
-        let mut vs = Vec::new();
+        let mut vs = Vec::with_capacity($crate::avec![@COUNT; $($element), *]);
         // repeat this operation as many times
         // the same number of times as the pattern that had element in it
         $(vs.push($element);)*
         vs
     }};
-    ($(element:expr,)*) =>{{
+    ($($element:expr,)*) =>{{
         $crate::avec![$($element), *]
     }};
     ($element:expr; $count:expr) => {{
         let mut vs = Vec::new();
         //avoid bounds checking
-        vs.resize(count, $element);
+        vs.resize($count, $element);
         vs
     }};
+
+    // Below tricks  for counting expression without
+    // consuming it
+    (@COUNT; $($element:expr),*) => {
+        <[()]>::len(&[$($crate::avec![@SUBST; $element]),*])
+    };
+
+    (@SUBST; $_element:expr) => { () }
 
 }
 
